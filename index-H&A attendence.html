@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>History & Archeology Club Attendance</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* General Reset */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', Arial, sans-serif;
+            background-color: #f8f9fc;
+            color: #333;
+        }
+        header {
+            background: #8B0000;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+        header h1 {
+            margin: 0;
+            font-size: 2rem;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .section {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+        .section:hover {
+            transform: translateY(-5px);
+        }
+        h2 {
+            color: #8B0000;
+            margin-top: 0;
+        }
+        form label {
+            font-weight: bold;
+        }
+        form select, form input, form button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        form button {
+            background-color: #8B0000;
+            color: white;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        form button:hover {
+            background-color: #600000;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table th, table td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+        table th {
+            background-color: #8B0000;
+            color: white;
+        }
+        .btn {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background 0.3s ease;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+        footer {
+            text-align: center;
+            padding: 10px;
+            background-color: #8B0000;
+            color: white;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>History & Archeology Club</h1>
+        <p>Advanced Attendance & Progress Management System</p>
+    </header>
+
+    <div class="container">
+        <!-- Create/Delete Account Section -->
+        <div class="section">
+            <h2>👤 Create/Delete Account</h2>
+            <form id="createAccountForm">
+                <label for="newStudentID">Student ID</label>
+                <input type="text" id="newStudentID" placeholder="Enter Student ID" required>
+                <label for="newStudentName">Student Name</label>
+                <input type="text" id="newStudentName" placeholder="Enter Student Name" required>
+                <button type="button" onclick="createAccount()">Save Account Permanently</button>
+            </form>
+            <hr>
+            <h3>Delete Account</h3>
+            <label for="deleteStudentID">Select Student to Delete</label>
+            <select id="deleteStudentID">
+                <!-- Options will be dynamically generated from saved accounts -->
+            </select>
+            <button type="button" onclick="deleteAccount()">Delete Account</button>
+        </div>
+
+        <!-- Mark Attendance Section -->
+        <div class="section">
+            <h2>📋 Mark Attendance</h2>
+            <form>
+                <label for="studentID">Select Student</label>
+                <select id="studentID">
+                    <!-- Options will be dynamically generated from saved accounts -->
+                </select>
+                <label for="attendanceStatus">Attendance Status</label>
+                <select id="attendanceStatus">
+                    <option value="Present">Present</option>
+                    <option value="Absent">Absent</option>
+                </select>
+                <button type="button" onclick="markAttendance()">Mark Attendance</button>
+            </form>
+        </div>
+
+        <!-- Add/Delete Project Section -->
+        <div class="section">
+            <h2>📚 Add/Delete Project</h2>
+            <form id="addProjectForm">
+                <label for="projectStudent">Select Student</label>
+                <select id="projectStudent">
+                    <!-- Options will be dynamically generated from saved accounts -->
+                </select>
+                <label for="projectName">Project Name</label>
+                <input type="text" id="projectName" placeholder="Enter Project Name" required>
+                <label for="projectDate">Project Date</label>
+                <input type="date" id="projectDate" required>
+                <label for="projectTime">Project Time</label>
+                <input type="time" id="projectTime" required>
+                <button type="button" onclick="addProject()">Assign Project</button>
+                <button type="button" onclick="saveProjectPermanently()">Save Project Permanently</button>
+            </form>
+            <hr>
+            <h3>Delete Project</h3>
+            <label for="deleteProjectName">Select Project to Delete</label>
+            <select id="deleteProjectName">
+                <!-- Options will be dynamically generated from saved projects -->
+            </select>
+            <button type="button" onclick="deleteProject()">Delete Project</button>
+        </div>
+
+        <!-- Attendance Preview -->
+        <div class="section">
+            <h2>👀 Attendance Preview</h2>
+            <button class="btn" onclick="previewAttendance()">Preview Attendance</button>
+            <button class="btn" onclick="downloadAttendance()">Download Report</button>
+            <table id="attendanceTable" class="hidden">
+                <thead>
+                    <tr>
+                        <th>Student ID</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <!-- Project Progress Section -->
+        <div class="section">
+            <h2>📈 Project Progress</h2>
+            <label for="projectStudentView">Select Student</label>
+            <select id="projectStudentView">
+                <!-- Options will be dynamically generated from saved accounts -->
+            </select>
+            <button class="btn" onclick="viewProgress()">View Project Progress</button>
+            <div id="projectProgressContainer"></div> <!-- To display progress -->
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2024 History & Archeology Club. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        let attendanceRecords = [];
+        let projects = JSON.parse(localStorage.getItem('projects')) || [];
+        let studentAccounts = JSON.parse(localStorage.getItem('studentAccounts')) || [];
+
+        // Load student accounts into select elements
+        function loadStudentAccounts() {
+            const studentSelectElements = document.querySelectorAll('select[id^="studentID"], select[id^="projectStudent"], select[id^="projectStudentView"], select[id^="deleteStudentID"]');
+            studentSelectElements.forEach(selectElement => {
+                selectElement.innerHTML = studentAccounts.map(account => `<option value="${account.studentID}">${account.studentID} - ${account.studentName}</option>`).join('');
+            });
+        }
+
+        // Load projects into delete project select
+        function loadProjectOptions() {
+            const deleteProjectSelect = document.getElementById('deleteProjectName');
+            deleteProjectSelect.innerHTML = projects.map(project => `<option value="${project.projectName}">${project.projectName}</option>`).join('');
+        }
+
+        // Create account
+        function createAccount() {
+            const studentID = document.getElementById('newStudentID').value;
+            const studentName = document.getElementById('newStudentName').value;
+
+            if (!studentID || !studentName) {
+                alert('Please fill in both fields.');
+                return;
+            }
+
+            // Check if student ID already exists
+            if (studentAccounts.some(account => account.studentID === studentID)) {
+                alert('Account with this Student ID already exists.');
+                return;
+            }
+
+            const newAccount = { studentID, studentName };
+            studentAccounts.push(newAccount);
+            localStorage.setItem('studentAccounts', JSON.stringify(studentAccounts));
+            alert('Account Created Successfully');
+            document.getElementById('createAccountForm').reset();
+            loadStudentAccounts();
+        }
+
+        // Delete account
+        function deleteAccount() {
+            const studentID = document.getElementById('deleteStudentID').value;
+            studentAccounts = studentAccounts.filter(account => account.studentID !== studentID);
+            localStorage.setItem('studentAccounts', JSON.stringify(studentAccounts));
+            alert('Account Deleted Successfully');
+            loadStudentAccounts();
+        }
+
+        // Mark attendance
+        function markAttendance() {
+            const id = document.getElementById('studentID').value;
+            const status = document.getElementById('attendanceStatus').value;
+            attendanceRecords.push({ id, status });
+            alert('Attendance Successfully Added');
+        }
+
+        // Preview attendance
+        function previewAttendance() {
+            const table = document.getElementById('attendanceTable');
+            const tbody = table.querySelector('tbody');
+            tbody.innerHTML = "";
+            attendanceRecords.forEach(record => {
+                tbody.innerHTML += `<tr>
+                    <td>${record.id}</td>
+                    <td>${record.status}</td>
+                </tr>`;
+            });
+            table.classList.remove('hidden');
+        }
+
+        // Download attendance report
+        function downloadAttendance() {
+            const csvContent = "data:text/csv;charset=utf-8,Student ID,Status\n" +
+                attendanceRecords.map(e => `${e.id},${e.status}`).join("\n");
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.href = encodedUri;
+            link.download = "attendance_report.csv";
+            link.click();
+        }
+
+        // Add project
+        function addProject() {
+            const studentID = document.getElementById('projectStudent').value;
+            const projectName = document.getElementById('projectName').value;
+            const projectDate = document.getElementById('projectDate').value;
+            const projectTime = document.getElementById('projectTime').value;
+
+            if (!projectName || !projectDate || !projectTime) {
+                alert('Please fill in all fields.');
+                return;
+            }
+
+            const newProject = { studentID, projectName, projectDate, projectTime };
+            projects.push(newProject);
+            localStorage.setItem('projects', JSON.stringify(projects));
+            alert('Project Assigned Successfully');
+            loadProjectOptions();
+        }
+
+        // Save project permanently
+        function saveProjectPermanently() {
+            localStorage.setItem('projects', JSON.stringify(projects));
+            alert('Project Saved Permanently');
+        }
+
+        // Delete project
+        function deleteProject() {
+            const projectName = document.getElementById('deleteProjectName').value;
+            projects = projects.filter(project => project.projectName !== projectName);
+            localStorage.setItem('projects', JSON.stringify(projects));
+            alert('Project Deleted Successfully');
+            loadProjectOptions();
+        }
+
+        // View project progress
+        function viewProgress() {
+            const studentID = document.getElementById('projectStudentView').value;
+            const studentProjects = projects.filter(project => project.studentID === studentID);
+
+            let progressHTML = `<h3>Projects:</h3><ul>`;
+            studentProjects.forEach(project => {
+                progressHTML += `<li>${project.projectName} - ${project.projectDate} - ${project.projectTime}</li>`;
+            });
+            progressHTML += '</ul>';
+
+            document.getElementById('projectProgressContainer').innerHTML = progressHTML;
+        }
+
+        // Load data on page load
+        loadStudentAccounts();
+        loadProjectOptions();
+    </script>
+</body>
+</html>
